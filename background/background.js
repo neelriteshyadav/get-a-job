@@ -32,7 +32,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 			sendResponse({
 				isRunning: !isAutomationPaused,
 				currentIndex: currentUrlIndex,
-				totalUrls: urls.length
+				totalUrls: urls.length,
 			});
 			break;
 	}
@@ -52,21 +52,22 @@ async function processNextUrl(retryCount = 0) {
 	try {
 		const tab = await chrome.tabs.create({ url, active: true });
 		await waitForPageLoad(tab.id);
-		await fillForm(tab.id);
-		await progressTracker.recordSuccess(url);
+		const response = await fillForm(tab.id);
+
+		if (response && response.success) {
+			await progressTracker.recordSuccess(url);
+		} else {
+			throw new Error(response?.error || 'Form filling failed');
+		}
+
 		currentUrlIndex++;
+		await chrome.tabs.remove(tab.id);
 		await processNextUrl();
 	} catch (error) {
 		console.error(`Error processing ${url}:`, error);
-
-		if (retryCount < MAX_RETRIES) {
-			await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
-			await processNextUrl(retryCount + 1);
-		} else {
-			await progressTracker.recordFailure(url, error.message);
-			currentUrlIndex++;
-			await processNextUrl();
-		}
+		await progressTracker.recordFailure(url, error.message);
+		currentUrlIndex++;
+		await processNextUrl();
 	}
 }
 
@@ -90,7 +91,7 @@ async function fillForm(tabId) {
 	return new Promise((resolve, reject) => {
 		const timeout = setTimeout(() => {
 			reject(new Error('Form fill timeout'));
-		}, 15000); // 15 second timeout
+		}, 15000);
 
 		chrome.tabs.sendMessage(tabId, { action: 'fillForm' }, (response) => {
 			clearTimeout(timeout);
