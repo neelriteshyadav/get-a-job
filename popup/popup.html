@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Job Application Automator</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Job Application Automator</h2>
+    
+    <div class="url-list">
+      <h3>Job Application URLs</h3>
+      <textarea id="urlList" placeholder="Enter URLs (one per line)"></textarea>
+    </div>
+
+    <div class="actions">
+      <button id="saveUrls">Save URLs</button>
+      <button id="startAutomation">Start Automation</button>
+    </div>
+
+    <div class="status">
+      <p id="statusMessage"></p>
+    </div>
+
+    <div class="profile-section">
+      <h3>Profile Information</h3>
+      <form id="profileForm">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input type="text" id="firstName" name="firstName">
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input type="text" id="lastName" name="lastName">
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email">
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone" name="phone">
+        </div>
+        <div class="form-group">
+          <label for="education">Education</label>
+          <textarea id="education" name="education"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="experience">Work Experience</label>
+          <textarea id="experience" name="experience"></textarea>
+        </div>
+        <button type="submit" id="saveProfile">Save Profile</button>
+      </form>
+    </div>
+
+    <div class="progress-section">
+      <h3>Progress</h3>
+      <div class="progress-bar">
+        <div id="progressFill"></div>
+      </div>
+      <div class="progress-stats">
+        <span id="completedCount">0</span> completed / 
+        <span id="failedCount">0</span> failed / 
+        <span id="totalCount">0</span> total
+      </div>
+      <div class="history-list" id="applicationHistory">
+        <!-- History items will be inserted here -->
+      </div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html> 
